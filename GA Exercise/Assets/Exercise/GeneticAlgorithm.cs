@@ -1,4 +1,4 @@
-﻿    using System.Collections;
+﻿
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -33,9 +33,11 @@ namespace Exercise
         public void InitializeAlgorithm(int size)
         {
             // initialize the arraylist and each gene's initial weights HERE
-            mPopulation = new List<GeneA>(size);
-            for (int i = 0; i < mPopulation.Count; i++)
-            {
+            mPopulation = new List<GeneA>();
+            for (int i = 0; i < size; i++) {
+                mPopulation.Add(new GeneA());
+            }
+            for (int i = 0; i < mPopulation.Count; i++) {
                 mPopulation[i].RandomizeChromosome();
             }
         }
@@ -61,8 +63,23 @@ namespace Exercise
          */
         public void ProduceNextGeneration()
         {
+            mPopulation.Sort((x, y) => x.GetFitness().CompareTo(y.GetFitness()));
             // use one of the offspring techniques suggested in class (also applying any mutations) HERE
-            print("No sexy time");
+            for (int i = 0; i < mPopulation.Count; i+=2) {
+                GeneAbstract<int>[] offspring;
+                GeneA temp1 = new GeneA();
+                GeneA temp2 = new GeneA();
+                
+                offspring = mPopulation[i].Reproduce(mPopulation[i+1]);
+               
+                offspring[0].Mutate();
+                offspring[1].Mutate();
+                
+                temp1.mChromosome = offspring[0].mChromosome;
+                temp2.mChromosome = offspring[1].mChromosome;
+                mPopulation[i] = temp1;
+                mPopulation[i] = temp2;
+            }
         }
 
         // accessors
@@ -88,6 +105,7 @@ namespace Exercise
             // If you wish the evolution to halt (for instance, after a number of
             //   generations is reached or the maximum fitness has been achieved),
             //   this is the place to make any such checks
+            // MAX_GENERATIONS
             while (generationCount < MAX_GENERATIONS)
             {
                 // --- evaluate current generation:
@@ -122,6 +140,11 @@ namespace Exercise
                 output += "\t MinFitness: " + minFitness + " (" + worstIndividual + ")";
                 output += "\t MaxFitness: " + maxFitness + " (" + bestIndividual + ")";
                 Debug.Log(output);
+
+                if (maxFitness == 10) {
+                    print("Perfect score is found at generation: " + generationCount);
+                    break;
+                }
                 
                 // produce next generation:
                 ProduceNextGeneration();

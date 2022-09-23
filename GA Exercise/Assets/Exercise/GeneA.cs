@@ -74,9 +74,14 @@ namespace Exercise
          */
         public override void RandomizeChromosome()
         {
-            for (int i = 0; i < mChromosome.Length; i++)
-            {
-                mChromosome[i] = Random.Range(0, 2);
+            for (int i = 0; i < mChromosome.Length; i++) {
+                int decider = Random.Range(0, 11);
+                
+                if (decider < 1) {
+                    mChromosome[i] = 1;
+                } else {
+                    mChromosome[i] = 0;
+                }
             }
         }
 
